@@ -54,12 +54,10 @@ jobs:
         id: release
         uses: "marvinpinto/action-automatic-releases@latest"
         if: steps.build.outcome == 'success'
-        env:
-          LATEST_VERSION: "${{ env.tag }}""
         with:
           repo_token: "${{ env.tag }}"
           prerelease: false
-          automatic_release_tag: ${{ env.tag }}
+          automatic_release_tag: "${{ env.tag }}"
           files: |
             ./iperf/iperf3-windows-${{ env.tag }}.zip
             ./iperf/iperf3-windows-${{ env.tag }}.tar.gz
