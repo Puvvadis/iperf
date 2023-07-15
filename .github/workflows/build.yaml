@@ -25,28 +25,24 @@ jobs:
       
       - name: Set output
         id: vars
-        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
       - name: Checkout iperf repo
         uses: actions/checkout@v3
-        env:
-          LATEST_VERSION: ${{ steps.vars.outputs.tag }}
         with:
           repository: esnet/iperf
           path: iperf
-          ref: $LATEST_VERSION
+          ref: "${{ env.tag }}"
           fetch-depth: 0
       
       - name: Build
         id: build
-        env:
-          LATEST_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
           cd ./iperf
-          git checkout $LATEST_VERSION
+          git checkout ${{ env.tag }}
           ./configure
           make
-          name=iperf3-windows-$LATEST_VERSION
+          name=iperf3-windows-${{ env.tag }}
           mkdir $name
           cp src/iperf3.exe $name/
           cp /usr/bin/msys-2.0.dll $name/
@@ -59,11 +55,11 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         if: steps.build.outcome == 'success'
         env:
-          LATEST_VERSION: ${{ steps.vars.outputs.tag }}
+          LATEST_VERSION: "${{ env.tag }}""
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          repo_token: "${{ env.tag }}"
           prerelease: false
-          automatic_release_tag: $LATEST_VERSION
+          automatic_release_tag: ${{ env.tag }}
           files: |
-            ./iperf/iperf3-windows-$LATEST_VERSION.zip
-            ./iperf/iperf3-windows-$LATEST_VERSION.tar.gz
+            ./iperf/iperf3-windows-${{ env.tag }}.zip
+            ./iperf/iperf3-windows-${{ env.tag }}.tar.gz
