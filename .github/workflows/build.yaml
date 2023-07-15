@@ -35,6 +35,7 @@ jobs:
           repository: esnet/iperf
           path: iperf
           ref: $LATEST_VERSION
+          fetch-depth: 0
       
       - name: Build
         id: build
@@ -42,6 +43,7 @@ jobs:
           LATEST_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
           cd ./iperf
+          git checkout $LATEST_VERSION
           ./configure
           make
           name=iperf3-windows-$LATEST_VERSION
