@@ -48,8 +48,8 @@ jobs:
           mv src/iperf3.exe src/iperf.exe
           zip -r $name.zip $name/
           tar -zcvf $name.tar.gz src/iperf.exe /usr/bin/msys-2.0.dll LICENSE
-          $(CertUtil -hashfile $name.tar.gz SHA256)[1] -replace " ","" > checksum-$name.tar.gz.txt
-          $(CertUtil -hashfile $name.zip SHA256)[1] -replace " ","" > checksum-$name.zip.txt
+          (Get-FileHash -Path $name.tar.gz -Algorithm SHA256).Hash > checksum-$name.tar.gz.txt
+          (Get-FileHash -Path  $name.zip -Algorithm SHA256).Hash > checksum-$name.zip.txt
 
       - name: Release
         id: release
