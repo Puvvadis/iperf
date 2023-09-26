@@ -48,13 +48,8 @@ jobs:
           mv src/iperf3.exe src/iperf.exe
           zip -r $name.zip $name/
           tar -zcvf $name.tar.gz src/iperf.exe /usr/bin/msys-2.0.dll LICENSE
-
-      - name: Generate checksum
-        uses: jmgilman/actions-generate-checksum@v1
-        with:
-          patterns: |
-            iperf/*.zip
-            iperf/*.tar.gz
+          $(CertUtil -hashfile $name.tar.gz SHA256)[1] -replace " ","" > checksum-$name.tar.gz.txt
+          $(CertUtil -hashfile $name.zip SHA256)[1] -replace " ","" > checksum-$name.zip.txt
 
       - name: Release
         id: release
@@ -65,6 +60,7 @@ jobs:
           prerelease: false
           automatic_release_tag: "${{ env.tag }}"
           files: |
-            checksum.txt
+            ./iperf/checksum-$name.tar.gz.txt
+            ./iperf/checksum-$name.zip.txt
             ./iperf/iperf-${{ env.tag }}.zip
             ./iperf/iperf-${{ env.tag }}.tar.gz
