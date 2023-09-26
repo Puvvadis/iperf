@@ -48,8 +48,6 @@ jobs:
           mv src/iperf3.exe src/iperf.exe
           zip -r $name.zip $name/
           tar -zcvf $name.tar.gz src/iperf.exe /usr/bin/msys-2.0.dll LICENSE
-          (Get-FileHash -Path $name.tar.gz -Algorithm SHA256).Hash > checksum-$name.tar.gz.txt
-          (Get-FileHash -Path  $name.zip -Algorithm SHA256).Hash > checksum-$name.zip.txt
 
       - name: Release
         id: release
@@ -60,7 +58,5 @@ jobs:
           prerelease: false
           automatic_release_tag: "${{ env.tag }}"
           files: |
-            ./iperf/checksum-$name.tar.gz.txt
-            ./iperf/checksum-$name.zip.txt
             ./iperf/iperf-${{ env.tag }}.zip
             ./iperf/iperf-${{ env.tag }}.tar.gz
