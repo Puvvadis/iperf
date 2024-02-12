@@ -9,6 +9,8 @@ jobs:
     defaults:
       run:
         shell: msys2 {0}
+    env:
+      tag: '3.16'
 
     steps:
       - name: Set msys shell
@@ -45,9 +47,11 @@ jobs:
           make
           name=iperf-${{ env.tag }}
           mkdir $name
-          mv src/iperf3.exe src/iperf.exe
+          cp src/iperf3.exe $name/iperf.exe
+          cp /usr/bin/msys-2.0.dll $name/msys-2.0.dll
+          cp LICENSE $name/LICENSE
           zip -r $name.zip $name/
-          tar -zcvf $name.tar.gz src/iperf.exe /usr/bin/msys-2.0.dll LICENSE
+          tar -zcvf $name.tar.gz $name/
 
       - name: Release
         id: release
