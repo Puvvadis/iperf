@@ -10,7 +10,7 @@ jobs:
       run:
         shell: msys2 {0}
     env:
-      tag: '3.16'
+      VERSION: 3.16
 
     steps:
       - name: Set msys shell
@@ -24,28 +24,23 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
-      - name: Set output
-        id: vars
-        run: |
-          echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-          echo $tag
+
       - name: Checkout iperf repo
         uses: actions/checkout@v3
         with:
           repository: esnet/iperf
           path: iperf
-          ref: "${{ env.tag }}"
+          ref: "${{ env.VERSION }}"
           fetch-depth: 0
       
       - name: Build
         id: build
         run: |
           cd ./iperf
-          git checkout ${{ env.tag }}
+          git checkout ${{ env.VERSION }}
           ./configure
           make
-          name=iperf-${{ env.tag }}
+          name=iperf-${{ env.VERSION }}
           mkdir $name
           cp src/iperf3.exe $name/iperf.exe
           cp /usr/bin/msys-2.0.dll $name/msys-2.0.dll
@@ -60,7 +55,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
-          automatic_release_tag: "${{ env.tag }}"
+          automatic_release_tag: "${{ env.VERSION }}"
           files: |
-            ./iperf/iperf-${{ env.tag }}.zip
-            ./iperf/iperf-${{ env.tag }}.tar.gz
+            ./iperf/iperf-${{ env.VERSION }}.zip
+            ./iperf/iperf-${{ env.VERSION }}.tar.gz
