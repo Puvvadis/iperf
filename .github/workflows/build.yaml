@@ -14,23 +14,23 @@ jobs:
 
     steps:
       - name: Set msys shell
-        uses: msys2/setup-msys2@v2
+        uses: msys2/setup-msys2@v2.22.0
         with:
           msystem: MSYS
           update: true
           install: make gcc zip git curl
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Checkout iperf repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: esnet/iperf
           path: iperf
-          ref: "${{ env.VERSION }}"
+          ref: ${{ env.VERSION }}
           fetch-depth: 0
       
       - name: Build
@@ -50,12 +50,11 @@ jobs:
 
       - name: Release
         id: release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: ncipollo/release-action@v1.14.0
         if: steps.build.outcome == 'success'
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
-          automatic_release_tag: "${{ env.VERSION }}"
-          files: |
-            ./iperf/iperf-${{ env.VERSION }}.zip
-            ./iperf/iperf-${{ env.VERSION }}.tar.gz
+          tag: ${{ env.VERSION }}
+          artifacts: "iperf/iperf-${{ env.VERSION }}.zip,.iperf/iperf-${{ env.VERSION }}.tar.gz"
+          commit: ${{ env.VERSION }}
